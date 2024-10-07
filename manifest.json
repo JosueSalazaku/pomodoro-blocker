@@ -5,14 +5,12 @@
     "description": "A Chrome extension to block sites for a focused work session using a Pomodoro-like timer.",
     "permissions": [
       "storage",  
-      "webRequest", 
-      "webRequestBlocking",  
-      "declarativeNetRequest",
+      "declarativeNetRequest",  
       "activeTab",
       "tabs"
     ],
     "action": {
-      "default_popup": "index.html"
+      "default_popup": "index.html"  
     },
     "background": {
       "service_worker": "blocking.js"  
@@ -21,8 +19,9 @@
       "*://*/*"  
     ],
     "icons": {
-      "1": "pomodoro-technique_12238217.png"
-
+      "16": "pomodoro-technique_12238217.png",  
+      "48": "pomodoro-technique_12238217.png", 
+      "128": "pomodoro-technique_12238217.png"  
     }
   }
   
