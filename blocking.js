@@ -23,11 +23,14 @@ chrome.storage.sync.get(['blockedSites', 'blockDuration', 'blockStartTime'], fun
             };
         });
 
-        chrome.declarativeNetRequest.updateDynamicRules({
-            removeRuleIds: rules.map(rule => rule.id),  
-            addRules: rules  
-        }, () => {
-            console.log('Blocking rules updated:', rules);
+        chrome.declarativeNetRequest.getDynamicRules(existingRules => {
+            const existingRuleIds = existingRules.map(rule => rule.id);
+            chrome.declarativeNetRequest.updateDynamicRules({
+                removeRuleIds: existingRuleIds,
+                addRules: rules
+            }, () => {
+                console.log('Blocking rules updated:', rules);
+            });
         });
     } else {
         console.log('Block period has ended, no sites are blocked.');
