@@ -16,6 +16,10 @@ body {
     gap: 20px;
 }
 
+h1 {
+    color: white;
+}
+
 #blocked-sites { 
     width: 350px;
     height: 125px;
