@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 chrome.storage.sync.get(['blockedSites', 'blockDuration', 'blockStartTime'], function(data) {
     const blockedSites = data.blockedSites;
@@ -9,21 +9,29 @@ chrome.storage.sync.get(['blockedSites', 'blockDuration', 'blockStartTime'], fun
     console.log('Block Duration (minutes):', blockDuration);
     console.log('Block Start Time:', blockStartTime);
 
-    const blockEndTime = blockStartTime + (blockDuration * 60 * 1000)
+    const blockEndTime = blockStartTime + (blockDuration * 60 * 1000);
     const currentTime = Date.now();
 
     if (currentTime < blockEndTime) {
-        chrome.webRequest.onBeforeRequest.addListener(
-            function (detail) {
-                console.log(`Blocking request to: ${detail.url}`);
-                return { cancel: true };
-            },
-            { url: blockedSites.map(site => `*://${site}/*`) },
-            ["blocking"]
-        );
+        const rules = blockedSites.map((site, index) => {
+            return {
+                "id": index + 1,  
+                "priority": 1,
+                "action": { "type": "block" },
+                "condition": { "urlFilter": site, "resourceTypes": ["main_frame"] }
+            };
+        });
+
+        chrome.declarativeNetRequest.updateDynamicRules({
+            removeRuleIds: rules.map(rule => rule.id),
+            addRules: rules
+        }, () => {
+            console.log('Blocking rules updated:', rules);
+        });
     } else {
         console.log('Block period has ended, no sites are blocked.');
-        chrome.webRequest.onBeforeRequest.removeListener(() => {});
+        chrome.declarativeNetRequest.updateDynamicRules({
+            removeRuleIds: []  
+        });
     }
-
 });
