@@ -14,17 +14,18 @@ chrome.storage.sync.get(['blockedSites', 'blockDuration', 'blockStartTime'], fun
 
     if (currentTime < blockEndTime) {
         const rules = blockedSites.map((site, index) => {
+            const pattern = `*://*.${site}/*`;  
             return {
-                "id": index + 1,  
+                "id": index + 1, 
                 "priority": 1,
-                "action": { "type": "block" },
-                "condition": { "urlFilter": site, "resourceTypes": ["main_frame"] }
+                "action": { "type": "block" },  
+                "condition": { "urlFilter": pattern, "resourceTypes": ["main_frame"] }  
             };
         });
 
         chrome.declarativeNetRequest.updateDynamicRules({
-            removeRuleIds: rules.map(rule => rule.id),
-            addRules: rules
+            removeRuleIds: rules.map(rule => rule.id),  
+            addRules: rules  
         }, () => {
             console.log('Blocking rules updated:', rules);
         });
